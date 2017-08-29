@@ -1,8 +1,38 @@
 import os
-from entry import Entry
 import csv_funcs
 
-# First screen to make a selection: new entry, search entry or quit
+#Class Entry is for creating new, updating and deleting entries.
+class Entry():
+    #Init method to create an empty list for the result
+    def __init__(self):
+        pass
+
+    #Class method to add an entry by providing a task name, a number of minutes spent working on it and any additional
+    # notes.
+    def add_entry(self):
+        csv_funcs.writef()
+
+    # Class method to find a previous entry by date.
+    def search_date(self):
+        print("Choose one to see entries from:\n")
+        csv_funcs.read_dates()
+
+    #Class method to find a previous entry by time spent.
+    def search_time(self):
+        print("Choose one to see entries from:\n")
+        csv_funcs.read_time()
+
+    # Class method to find a previous entry by exact search.
+    def search_string(self):
+        csv_funcs.read_string()
+
+    # Class method to find a previous entry by pattern.
+    def search_pattern(self):
+        csv_funcs.read_pattern()
+
+
+# First screen to make a selection: new entry, search entry or quit.
+# Based on the selection, csv file specific functions will be run.
 def main_screen():
     selection = (input("To make an entry, press E."
                        "To look up a previous entry, press S."
@@ -16,17 +46,17 @@ def main_screen():
                          'To search by exact match, press E.\n'
                          "To search by pattern, press P.\n")).upper()
         if selected == 'D':
-           search_date()
-
+            selected = Entry()
+            selected.search_date()
         if selected == 'T':
-            time_spent = input('Enter the number of minutes of a task took:\n')
-            search_time_spent(time_spent)
+            selected = Entry()
+            selected.search_time()
         if selected == 'E':
-            exact_entry = input('Enter a date to look up for a specific entry.\n')
-            search_exact_entry(exact_entry)
+            selected = Entry()
+            selected.search_string()
         if selected == 'P':
-            pattern = input('Enter a pattern to look up for a specific entry based on its task and notes.\n')
-            search_pattern(pattern)
+            selected = Entry()
+            selected.search_pattern()
     if selection == 'Q':
         print("You quit")
         clear()
