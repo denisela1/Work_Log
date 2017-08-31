@@ -1,6 +1,7 @@
 import csv
 from datetime import datetime
 import menu
+import re
 
 
 def read_dates():
@@ -14,6 +15,7 @@ def read_dates():
         data = list(reader)
         print(data[index])
 
+
 def read_time():
     with open("logs.csv", 'r') as csvfile:
         reader = csv.reader(csvfile)
@@ -24,6 +26,7 @@ def read_time():
         index = int(input("Enter the number of the task with requested minute spent:\n"))
         data = list(reader)
         print(data[index])
+
 
 def read_string():
     with open("logs.csv", 'r') as csvfile:
@@ -36,10 +39,14 @@ def read_string():
             if keyword.lower() in (row[3]).lower():
                 print("Notes including the keyword:\n",row[0], row[1], row[2], row[3])
 
-#def read_pattern():
-    #with open("logs.csv", 'r') as csvfile:
-        #reader = csv.reader(csvfile)
-        #for row in reader:
+
+def read_pattern():
+    regexp = str(input("Enter a regular expression to search within existing task names and notes.\n"))
+    with open("logs.csv", 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        match = re.search(regexp, reader)
+        print(match)
+
 
 def writef():
     with open("logs.csv", 'a', newline = '') as csvfile:
@@ -50,7 +57,8 @@ def writef():
                 task_input = input('Enter the name of the task.\n')
                 time_input = int(input('Enter minutes spent:\n'))
                 notes_input = str(input('Enter any additional notes:\n'))
-                select = (str(input("Entry recorded. To quit, press Q. To go back to the main menu, press any letter.\n"))).upper()
+                select = (str(input("Entry recorded. To quit, press Q. "
+                                    "To go back to the main menu, press any letter.\n"))).upper()
                 if select == "Q":
                     print("You quit.\n")
                     break
@@ -61,3 +69,4 @@ def writef():
             else:
                 break
         writer.writerow([date_input, task_input, time_input, notes_input])
+        
