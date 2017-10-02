@@ -4,7 +4,7 @@ import csv_funcs
 #Class Entry is for creating new, updating and deleting entries.
 class Entry():
     #Init method to create an empty list for the result
-    def __init__(self):
+    def __init__(self) -> object:
         pass
 
     #Class method to add an entry by providing a task name, a number of minutes spent working on it and any additional
@@ -19,7 +19,6 @@ class Entry():
 
     #Class method to find a previous entry by time spent.
     def search_time(self):
-        print("Choose one to see entries from:\n")
         csv_funcs.read_time()
 
     # Class method to find a previous entry by exact search.
@@ -27,8 +26,8 @@ class Entry():
         csv_funcs.read_string()
 
     # Class method to find a previous entry by pattern.
-    def search_pattern(self):
-        csv_funcs.read_pattern()
+    def search_pattern(self, pattern):
+        csv_funcs.read_pattern(pattern)
 
 
 # First screen to make a selection: new entry, search entry or quit.
@@ -56,7 +55,8 @@ def main_screen():
             selected.search_string()
         if selected == 'P':
             selected = Entry()
-            selected.search_pattern()
+            pattern = str(input("Enter a pattern\n"))
+            selected.search_pattern(pattern)
     if selection == 'Q':
         print("You quit")
         clear()
