@@ -89,7 +89,9 @@ def read_pattern(pattern):
             with open("logs.csv", 'r') as csvfile:
                 reader = csv.reader(csvfile)
                 for row in reader:
-                    return re.findall(pattern,row)
+                    match = re.search(pattern,row)
+                    if match is not None:
+                        return row
         except ValueError:
             print('Sorry, please enter a valid value')
         else:
