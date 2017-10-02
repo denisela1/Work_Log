@@ -83,15 +83,13 @@ def read_string():
             break
 
 
-def read_pattern():
+def read_pattern(pattern):
     while True:
         try:
-            regexp = str(input("Enter a regular expression to search within existing task names and notes:\n"))
-            match = []
             with open("logs.csv", 'r') as csvfile:
                 reader = csv.reader(csvfile)
                 for row in reader:
-                    print(re.findall(r"{}".format(regexp), row))
+                    return re.findall(pattern,row)
         except ValueError:
             print('Sorry, please enter a valid value')
         else:
