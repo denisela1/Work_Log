@@ -26,8 +26,8 @@ class Entry():
         csv_funcs.read_string()
 
     # Class method to find a previous entry by pattern.
-    def search_pattern(self, pattern):
-        csv_funcs.read_pattern(pattern)
+    def search_pattern(self):
+        csv_funcs.read_pattern()
 
 
 # First screen to make a selection: new entry, search entry or quit.
@@ -55,11 +55,16 @@ def main_screen():
             selected.search_string()
         if selected == 'P':
             selected = Entry()
-            pattern = str(input("Enter a pattern\n"))
-            selected.search_pattern(pattern)
+            selected.search_pattern()
+        else:
+            print('Not a valid entry. Please try again.\n')
+            main_screen()
     if selection == 'Q':
         print("You quit")
         clear()
+    else:
+        print('Not a valid entry. Please try again.\n')
+        main_screen()
 
 
 def clear():
@@ -67,6 +72,7 @@ def clear():
         os.system('cls')
     else:
         os.system('clear')
+
 
 if __name__ == '__main__':
      main_screen()
