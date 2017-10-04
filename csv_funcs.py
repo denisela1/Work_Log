@@ -7,7 +7,6 @@ import re
 def read_dates():
     with open("logs.csv", 'r') as csvfile:
         reader = csv.reader(csvfile)
-        data = []
         i = 0
         for row in reader:
             print(i, row[0], row[1])
@@ -31,23 +30,28 @@ def read_time():
             index = str(input("Enter the total amount of minutes spent to list associated tasks:\n"))
             with open("logs.csv", 'r') as csvfile:
                 reader = csv.reader(csvfile)
-                i = 0
+                i = 1
                 results = []
                 for row in reader:
-                    results.append(row)
-                    i += 1
-                    if index in row:
-                        print(i,row)
-                selection = int(input("Select the number of the task (on the left side) you'd like to list the details of.\n"))
-                print(results[selection-1])
-                select = (str(input("To quit, press Q. "
-                            "To go back to the main menu, press any letter.\n"))).upper()
-                if select == "Q":
-                    print("You quit.\n")
+                    for value in row:
+                        if index in value:
+                            print(i, row)
+                            results.append(row)
+                            i += 1
+                if len(results) != 0:
+                    selection = int(input("Select the number of the task (on the left side) you'd like to list "
+                                          "the details of.\n"))
+                    print(results[selection - 1])
+                    select = (str(input("To quit, press Q. To go back to the main menu, press any letter.\n"))).upper()
+                    if select == "Q":
+                        print("You quit.\n")
+                    else:
+                        menu.main_screen()
                 else:
+                    print("Sorry, no entry found.")
                     menu.main_screen()
         except ValueError:
-            print('Sorry, please enter a valid value')
+            print('Sorry, your entry is not valid.\n')
         else:
             break
 
@@ -88,11 +92,12 @@ def read_pattern():
         try:
             with open("logs.csv", 'r') as csvfile:
                 reader = csv.reader(csvfile)
-                pat = re.compile(str(input("Enter a pattern\n")))
+                pat = str(input("Please enter a pattern (e.g. \w).\n"))
                 for row in reader:
                     for value in row:
                         match = re.findall(pat,value)
-                        print(match)
+                        if match:
+                            print(row)
         except ValueError:
             print('Sorry, please enter a valid value')
         else:
