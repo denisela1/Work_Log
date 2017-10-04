@@ -83,15 +83,16 @@ def read_string():
             break
 
 
-def read_pattern(pattern):
+def read_pattern():
     while True:
         try:
             with open("logs.csv", 'r') as csvfile:
                 reader = csv.reader(csvfile)
+                pat = re.compile(str(input("Enter a pattern\n")))
                 for row in reader:
                     for value in row:
-                        match = re.search(pattern, value)
-            print(match)
+                        match = re.findall(pat,value)
+                        print(match)
         except ValueError:
             print('Sorry, please enter a valid value')
         else:
