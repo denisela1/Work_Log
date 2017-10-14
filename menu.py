@@ -1,72 +1,47 @@
 import os
 import csv_funcs
 
-#Class Entry is for creating new, updating and deleting entries.
-class Entry():
-    #Init method to create an empty list for the result
-    def __init__(self) -> object:
-        pass
 
-    #Class method to add an entry by providing a task name, a number of minutes spent working on it and any additional
-    # notes.
-    def add_entry(self):
-        csv_funcs.writef()
-
-    # Class method to find a previous entry by date.
-    def search_date(self):
-        print("Choose one to see entries from:\n")
-        csv_funcs.read_dates()
-
-    #Class method to find a previous entry by time spent.
-    def search_time(self):
-        csv_funcs.read_time()
-
-    # Class method to find a previous entry by exact search.
-    def search_string(self):
-        csv_funcs.read_string()
-
-    # Class method to find a previous entry by pattern.
-    def search_pattern(self):
-        csv_funcs.read_pattern()
-
-
-# First screen to make a selection: new entry, search entry or quit.
-# Based on the selection, csv file specific functions will be run.
+# First screen for the user to make a selection: new entry, search entry or quit.
 def main_screen():
-    selection = (input("To make an entry, press E."
-                       "To look up a previous entry, press S."
-                       "To quit, press Q.\n")).upper()
-    if selection == 'E':
-        selected = Entry()
-        selected.add_entry()
-    if selection == 'S':
-        selected = (input("To search by date, press D.\n"
-                         "To search by time spent, press T.\n"
-                         'To search by exact match, press E.\n'
-                         "To search by pattern, press P.\n")).upper()
-        if selected == 'D':
-            selected = Entry()
-            selected.search_date()
-        if selected == 'T':
-            selected = Entry()
-            selected.search_time()
-        if selected == 'E':
-            selected = Entry()
-            selected.search_string()
-        if selected == 'P':
-            selected = Entry()
-            selected.search_pattern()
-        else:
-            print('Not a valid entry. Please try again.\n')
-            main_screen()
-    if selection == 'Q':
-        print("You quit")
-        clear()
+        while True:
+            selection = (input("For a new entry, press E.\n"
+                               "To find a previous entry, press S.\n"
+                               "To quit, press Q.\n")).upper()
+            if selection == 'E':
+                csv_funcs.write_file()
+            elif selection == 'S':
+                search_menu()
+            elif selection == 'Q':
+                print("You quit")
+                break
+            else:
+                print('Please try again.\n')
+
+
+# If the user selects "search" option, the following screen will appear, giving the user 4 options to run a search:
+# By date, by time spent, by exact match and by pattern/regular expression.
+def search_menu():
+    selected = (input("To search by date, press D.\n"
+                      "To search by time spent, press T.\n"
+                      "To search by exact match, press E.\n"
+                      "To search by pattern, press P.\n"
+                      "To go back to the main menu, press Q.\n")).upper()
+    if selected == 'D':
+        csv_funcs.read_dates()
+    elif selected == 'T':
+        csv_funcs.read_time()
+    elif selected == 'E':
+        csv_funcs.read_string()
+    elif selected == 'P':
+        csv_funcs.read_pattern()
+    elif selected == 'Q':
+        print("You quit\n")
     else:
-        print('Not a valid entry. Please try again.\n')
-        main_screen()
+        print("Not a valid selection.\n")
 
 
+# Function to clear screen as the program runs
 def clear():
     if os.name == 'nt':
         os.system('cls')
@@ -74,5 +49,7 @@ def clear():
         os.system('clear')
 
 
+# To make sure program doesn't run when modules are only imported
 if __name__ == '__main__':
-     main_screen()
+    main_screen()
+
