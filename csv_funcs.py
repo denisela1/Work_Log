@@ -3,62 +3,102 @@ from datetime import datetime
 import menu
 import re
 import itertools
+import os
 
 
-# Function to read dates in the csv file and return entries based on the date selected by the user
-def read_file(index=None):
+# Function to clear screen as the program runs
+def clear():
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
+
+
+# Function to read the csv file and return data as a dictionary, dates being the keys and tasks, time, notes
+# are the values
+def read_file():
+    # {'2017-10-14': [ {'name': 'Task', 'time': '10', 'notes': ''} ]}
     with open("logs.csv", 'r') as csvfile:
         reader = csv.reader(csvfile)
-        results = list(reader)
-        dates_only = []
-        for item in results:
-            if item[0] not in dates_only:
-                dates_only.append(item[0])
-
-        if index is None:
-            output = output.join(dates_only)
-        else:
-            output = output.join(dates_only[index])
-        print(output)
-
+        result = list(reader)
+        dictionary = {}
+        for i in result[1:]:
+            date, task, mins, notes = i[0],i[1],i[2],i[3]
+            details = {'name': task, 'time': mins, 'notes': notes}
+            if date in dictionary.keys():
+                dictionary[date].append(details)
+            else:
+                dictionary.update({date: [details]})
+        return dictionary
 
 
+# Function to display options using the dictionary format, only unique dates are shown
+def show_options(data):
+    indexed = {}
+    for i, v in enumerate(data):
+        print(i + 1, v)
+        indexed.update({i + 1: v})
+    return indexed
+
+
+# Function to display results based on search options
+def show_results(dictionary, selection):
+    for key, value in dictionary.items():
+        if selection == key:
+            for i in value:
+                print(key)
+                for keys, values in i.items():
+                    print(keys, values)
+                print('\t')
+
+
+# Function to read dates in the csv file and return entries based on the date selected by the user.
+# First, storing the values of the read_file() function
 def read_dates():
-    read_file()
-    return
-    titles = ['Date', 'Task', 'Minutes Spent', 'Notes']
-    with open("logs.csv", 'r') as csvfile1:
-        reader = csv.reader(csvfile1)
-        results = []
-        final = []
-        entry = ''
-        i = 0
-        for row in reader:
-            if row[0] not in results:
-                results.append((row[0]))
-                print(i, row[0])
-                i += 1
+    dictionary = read_file()
+    while True:
+        display_dictionary = show_options(dictionary.keys())
         index = int(input("Please select a date to list the details by entering its number on the left side:\n"))
-        if index > i:
-            print("Not a valid selection. Please try again.")
-            read_dates()
+        selection = display_dictionary[index]
+        show_results(dictionary, selection)
+        prompt = input('\nPress Q to quit or R to return to selection screen.\n')
+        if prompt == 'R':
+            continue
+        elif prompt == 'Q':
+            break
         else:
-            entry = results[index]
-        with open("logs.csv", 'r') as csvfile2:
-            reader = csv.reader(csvfile2)
-            for row in reader:
-                if entry in row[0]:
-                    final.append(row)
-            for i in final:
-                dictionary = dict(zip(titles, i))
-                print(str(dictionary).replace("{", "").replace("}", ""))
-        print("\n")
-    # menu.main_screen()
+            print("Not a valid option. Please try again.")
 
 
 # Function to read time associated with tasks in the csv file and return the entries based on
 # the time entered by the user
-def read_time() -> object:
+def read_time():
+    while True:
+        dictionary = read_file()
+        match = []
+        try:
+            search = str(input("Enter the total amount of minutes spent to list associated tasks:\n"))
+            for key, value in dictionary.items():
+                for v in value:
+                    if v['time'] == search:
+                        match.append(key)
+            filtered_dictionary = dict((k, dictionary[k]) for k in match if k in dictionary)
+            for v in filtered_dictionary.values():
+                for i in v:
+                    if i['time'] != search:
+                        v.remove(i)
+            display_dictionary = show_options(filtered_dictionary.keys())
+            index = int(input("Please select a date to list the details by entering its number on the left side:\n"))
+            selection = display_dictionary[index]
+            show_results(filtered_dictionary, selection)
+        except ValueError:
+            print('Sorry, your entry is not valid.\n')
+        else:
+            break
+
+
+# Previous code
+def read_time1():
     titles = ['Date', 'Task', 'Minutes Spent', 'Notes']
     while True:
         try:
@@ -93,6 +133,32 @@ def read_time() -> object:
 # of the user input
 def read_string():
     while True:
+        dictionary = read_file()
+        match = []
+        try:
+            search = str(input("Enter a keyword to search for a specific task or note:\n")).lower()
+            for key, value in dictionary.items():
+                for v in value:
+                    if search in (v['name']).lower():
+                        match.append(key)
+            filtered_dictionary = dict((k, dictionary[k]) for k in match if k in dictionary)
+            for v in filtered_dictionary.values():
+                for i in v:
+                    if (i['name']).lower() != search:
+                        v.remove(i)
+            display_dictionary = show_options(filtered_dictionary.keys())
+            index = int(input("Please select a date to list the details by entering its number on the left side:\n"))
+            selection = display_dictionary[index]
+            show_results(filtered_dictionary, selection)
+        except ValueError:
+            print('Sorry, your entry is not valid.\n')
+        else:
+            break
+
+
+# Previous code
+def read_string1():
+    while True:
         try:
             keyword = (str(input("Enter a keyword to search for a specific task or note.\n"))).lower()
             with open("logs.csv", 'r') as csvfile:
@@ -119,6 +185,36 @@ def read_string():
 
 # Function to read pattern as a regular expression entered by the user and return the entries that match
 def read_pattern():
+    while True:
+        dictionary = read_file()
+        print(dictionary)
+        match = []
+        try:
+            search = str(input("Please enter a pattern (e.g. \w).\n"))
+            for key, value in dictionary.items():
+                for v in value:
+                    match = re.findall(search, v['name'])
+                    if match:
+                        match.append(key)
+            filtered_dictionary = dict((k, dictionary[k]) for k in match if k in dictionary)
+            print(filtered_dictionary)
+            for v in filtered_dictionary.values():
+                for i in v:
+                    match = re.findall(search, i['name'])
+                    if not match:
+                        v.remove(i)
+            display_dictionary = show_options(filtered_dictionary.keys())
+            index = int(input("Please select a date to list the details by entering its number on the left side:\n"))
+            selection = display_dictionary[index]
+            show_results(filtered_dictionary, selection)
+        except ValueError:
+            print('Sorry, your entry is not valid.\n')
+        else:
+            break
+
+
+# Previous code
+def read_pattern1():
     titles = ['Date', 'Task', 'Minutes Spent', 'Notes']
     while True:
         try:
