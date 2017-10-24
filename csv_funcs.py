@@ -1,8 +1,6 @@
 import csv
 from datetime import datetime
-import menu
 import re
-import itertools
 import os
 
 
@@ -23,8 +21,8 @@ def read_file():
         result = list(reader)
         dictionary = {}
         for i in result[1:]:
-            date, task, mins, notes = i[0],i[1],i[2],i[3]
-            details = {'name': task, 'time': mins, 'notes': notes}
+            date, task, mins, notes = i[0], i[1], i[2], i[3]
+            details = {'Name': task, 'Time': mins, 'Notes': notes}
             if date in dictionary.keys():
                 dictionary[date].append(details)
             else:
@@ -52,15 +50,20 @@ def show_results(dictionary, selection):
                 print('\t')
 
 
+# Function to display the details based on user selection
+def show_details(filtered_dictionary):
+    display_dictionary = show_options(filtered_dictionary.keys())
+    index = int(input("Please select a date to list the details by entering its number on the left side:\n"))
+    selection = display_dictionary[index]
+    show_results(filtered_dictionary, selection)
+
+
 # Function to read dates in the csv file and return entries based on the date selected by the user.
 # First, storing the values of the read_file() function
 def read_dates():
     dictionary = read_file()
     while True:
-        display_dictionary = show_options(dictionary.keys())
-        index = int(input("Please select a date to list the details by entering its number on the left side:\n"))
-        selection = display_dictionary[index]
-        show_results(dictionary, selection)
+        show_details(dictionary)
         prompt = input('\nPress Q to quit or R to return to selection screen.\n')
         if prompt == 'R':
             continue
@@ -80,49 +83,14 @@ def read_time():
             search = str(input("Enter the total amount of minutes spent to list associated tasks:\n"))
             for key, value in dictionary.items():
                 for v in value:
-                    if v['time'] == search:
+                    if v['Time'] == search:
                         match.append(key)
             filtered_dictionary = dict((k, dictionary[k]) for k in match if k in dictionary)
             for v in filtered_dictionary.values():
                 for i in v:
-                    if i['time'] != search:
+                    if i['Time'] != search:
                         v.remove(i)
-            display_dictionary = show_options(filtered_dictionary.keys())
-            index = int(input("Please select a date to list the details by entering its number on the left side:\n"))
-            selection = display_dictionary[index]
-            show_results(filtered_dictionary, selection)
-        except ValueError:
-            print('Sorry, your entry is not valid.\n')
-        else:
-            break
-
-
-# Previous code
-def read_time1():
-    titles = ['Date', 'Task', 'Minutes Spent', 'Notes']
-    while True:
-        try:
-            index = str(input("Enter the total amount of minutes spent to list associated tasks:\n"))
-            with open("logs.csv", 'r') as csvfile:
-                reader = csv.reader(csvfile)
-                results = []
-                c = 1
-                for row in reader:
-                    if row[2] == index:
-                        results.append(row)
-                for i in results:
-                    dictionary = dict(zip(titles, i))
-                    print(c, str(dictionary).replace("{", "").replace("}", ""))
-                    c += 1
-                if len(results) != 0:
-                    selection = int(input("Select the number of the task (on the left side) you'd like to list "
-                                          "the details of.\n"))
-                    selected = results[selection-1]
-                    dictionary = dict(zip(titles, selected))
-                    print(str(dictionary).replace("{", "").replace("}", ""))
-                else:
-                    print("Sorry, no entry found.")
-                    # menu.main_screen()
+            show_details(filtered_dictionary)
         except ValueError:
             print('Sorry, your entry is not valid.\n')
         else:
@@ -139,100 +107,43 @@ def read_string():
             search = str(input("Enter a keyword to search for a specific task or note:\n")).lower()
             for key, value in dictionary.items():
                 for v in value:
-                    if search in (v['name']).lower():
+                    if search in (v['Name']).lower():
                         match.append(key)
             filtered_dictionary = dict((k, dictionary[k]) for k in match if k in dictionary)
             for v in filtered_dictionary.values():
                 for i in v:
-                    if (i['name']).lower() != search:
+                    if (i['Name']).lower() != search:
                         v.remove(i)
-            display_dictionary = show_options(filtered_dictionary.keys())
-            index = int(input("Please select a date to list the details by entering its number on the left side:\n"))
-            selection = display_dictionary[index]
-            show_results(filtered_dictionary, selection)
+            show_details(filtered_dictionary)
         except ValueError:
             print('Sorry, your entry is not valid.\n')
         else:
             break
-
-
-# Previous code
-def read_string1():
-    while True:
-        try:
-            keyword = (str(input("Enter a keyword to search for a specific task or note.\n"))).lower()
-            with open("logs.csv", 'r') as csvfile:
-                reader = csv.reader(csvfile)
-                i = 0
-                for row in reader:
-                    if keyword in row[1].lower():
-                        if keyword in row[3].lower():
-                            print("Entries found:")
-                            print(row)
-                            i += 1
-                        else:
-                            print("Entries found:")
-                            print(row)
-                            i += 1
-                if i == 0:
-                    print("Sorry, no task and/or note found.\n")
-        except ValueError:
-            print('Sorry, please enter a valid value')
-        else:
-            break
-    # menu.main_screen()
 
 
 # Function to read pattern as a regular expression entered by the user and return the entries that match
 def read_pattern():
     while True:
         dictionary = read_file()
-        print(dictionary)
-        match = []
+        filtered = []
         try:
             search = str(input("Please enter a pattern (e.g. \w).\n"))
             for key, value in dictionary.items():
                 for v in value:
-                    match = re.findall(search, v['name'])
-                    if match:
-                        match.append(key)
-            filtered_dictionary = dict((k, dictionary[k]) for k in match if k in dictionary)
-            print(filtered_dictionary)
+                    match_name = re.findall(search, v['Name'])
+                    match_notes = re.findall(search, v['Notes'])
+                    if match_name or match_notes:
+                        filtered.append(key)
+            filtered_dictionary = dict((k, dictionary[k]) for k in filtered if k in dictionary)
             for v in filtered_dictionary.values():
                 for i in v:
-                    match = re.findall(search, i['name'])
-                    if not match:
+                    match_name = re.findall(search, i['Name'])
+                    match_notes = re.findall(search, i['Notes'])
+                    if not match_name or not match_notes:
                         v.remove(i)
-            display_dictionary = show_options(filtered_dictionary.keys())
-            index = int(input("Please select a date to list the details by entering its number on the left side:\n"))
-            selection = display_dictionary[index]
-            show_results(filtered_dictionary, selection)
+            show_details(filtered_dictionary)
         except ValueError:
             print('Sorry, your entry is not valid.\n')
-        else:
-            break
-
-
-# Previous code
-def read_pattern1():
-    titles = ['Date', 'Task', 'Minutes Spent', 'Notes']
-    while True:
-        try:
-            with open("logs.csv", 'r') as csvfile:
-                reader = csv.reader(csvfile)
-                pat = str(input("Please enter a pattern (e.g. \w).\n"))
-                results = []
-                for row in reader:
-                    for value in row[1] or row[3]:
-                        match = re.findall(pat, value)
-                        if match:
-                            results.append(row)
-            final = list(results for results, _ in itertools.groupby(results))
-            for i in final:
-                dictionary = dict(zip(titles, i))
-                print(str(dictionary).replace("{", "").replace("}", ""))
-        except ValueError:
-            print('Sorry, please enter a valid value')
         else:
             break
 
@@ -259,11 +170,10 @@ def write_file():
                     print("You quit.\n")
                     break
                 else:
-                    # menu.main_screen()
                     pass
             except ValueError:
                 print('Sorry, please enter a valid value')
             else:
-                print('this happened')
+                print('\t')
                 break
         writer.writerow([date_input, task_input, time_input, notes_input])
