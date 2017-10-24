@@ -4,18 +4,20 @@ import re
 import os
 
 
-# Function to clear screen as the program runs
 def clear():
+    """Function to clear screen as the program runs."""
     if os.name == 'nt':
         os.system('cls')
     else:
         os.system('clear')
 
 
-# Function to read the csv file and return data as a dictionary, dates being the keys and tasks, time, notes
-# are the values
 def read_file():
-    # {'2017-10-14': [ {'name': 'Task', 'time': '10', 'notes': ''} ]}
+    """
+    Function to read the csv file and return data as a dictionary, dates being the keys and tasks, time, notes are
+    the values.
+    {'2017-10-14': [ {'name': 'Task', 'time': '10', 'notes': ''} ]}
+    """
     with open("logs.csv", 'r') as csvfile:
         reader = csv.reader(csvfile)
         result = list(reader)
@@ -30,8 +32,11 @@ def read_file():
         return dictionary
 
 
-# Function to display options using the dictionary format, only unique dates are shown
 def show_options(data):
+    """
+    Function to display date options after the user input.
+    This function is formatted to be used after the search logic in each search function.
+    """
     indexed = {}
     for i, v in enumerate(data):
         print(i + 1, v)
@@ -39,8 +44,12 @@ def show_options(data):
     return indexed
 
 
-# Function to display results based on search options
 def show_results(dictionary, selection):
+    """
+    Function to display results based on the selected date.
+    If a date (the key of the dictionary) has more than one entry, this function will make sure to provide these options
+    Otherwise, only one result will be shown.
+    """
     for key, value in dictionary.items():
         if selection == key:
             for i in value:
@@ -50,17 +59,22 @@ def show_results(dictionary, selection):
                 print('\t')
 
 
-# Function to display the details based on user selection
 def show_details(filtered_dictionary):
+    """
+    After the search results are shown and final selection is made, this function organizes the data to be included in
+    the final results/details. It's formatted to be used by each search function.
+    """
     display_dictionary = show_options(filtered_dictionary.keys())
     index = int(input("Please select a date to list the details by entering its number on the left side:\n"))
     selection = display_dictionary[index]
     show_results(filtered_dictionary, selection)
 
 
-# Function to read dates in the csv file and return entries based on the date selected by the user.
-# First, storing the values of the read_file() function
 def read_dates():
+    """
+    Function to read dates in the csv file and return entries based on the date selected by the user.
+    Data is stored as a dictionary, dates being the keys.
+    """
     dictionary = read_file()
     while True:
         show_details(dictionary)
@@ -73,9 +87,12 @@ def read_dates():
             print("Not a valid option. Please try again.")
 
 
-# Function to read time associated with tasks in the csv file and return the entries based on
-# the time entered by the user
 def read_time():
+    """
+    Function to run the search logic to find entries by time.
+    The search logic filters the data and stores it in a variable called 'filtered_dictionary'.
+    Filtered_dictionary is passed to the function 'show_details' to list the details.
+    """
     while True:
         dictionary = read_file()
         match = []
@@ -97,9 +114,12 @@ def read_time():
             break
 
 
-# Function to read task names and notes for each entry in the csv file and return the entries based on exact match
-# of the user input
 def read_string():
+    """
+    Function to run the search logic to find entries by exact match.
+    The search logic filters the data and stores it in a variable called 'filtered_dictionary'.
+    Filtered_dictionary is passed to the function 'show_details' to list the details.
+    """
     while True:
         dictionary = read_file()
         match = []
@@ -121,8 +141,12 @@ def read_string():
             break
 
 
-# Function to read pattern as a regular expression entered by the user and return the entries that match
 def read_pattern():
+    """
+    Function to run the search logic to find entries by pattern.
+    The search logic filters the data and stores it in a variable called 'filtered_dictionary'.
+    Filtered_dictionary is passed to the function 'show_details' to list the details.
+    """
     while True:
         dictionary = read_file()
         filtered = []
@@ -148,8 +172,8 @@ def read_pattern():
             break
 
 
-# Function to enter a new log to the csv file
 def write_file():
+    """Function to enter a new log to the csv file and make sure the user input is in the required format."""
     with open("logs.csv", 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
         date_input = None
