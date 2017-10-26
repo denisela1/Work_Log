@@ -87,13 +87,11 @@ def read_dates():
     dictionary = read_file()
     while True:
         show_details(dictionary)
-        prompt = input('\nPress Q to quit or R to return to selection screen.\n')
+        prompt = (input('\nPress any letter to go back to the main menu or R to return to selection screen.\n')).upper()
         if prompt == 'R':
             continue
-        elif prompt == 'Q':
-            break
         else:
-            print("Not a valid option. Please try again.")
+            break
 
 
 def read_time():
@@ -192,28 +190,16 @@ def write_file():
     """Function to enter a new log to the csv file and make sure the user input is in the required format."""
     with open("logs.csv", 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        date_input = None
-        task_input = ''
-        time_input = None
         while True:
             try:
-                if date_input is None:
-                    date_input = (datetime.strptime(input('Enter a date (MM/DD/YYYY).\n'), '%m/%d/%Y')).date()
-                if not task_input:
-                    task_input = input('Enter the name of the task.\n')
-                if time_input is None:
-                    time_input = int(input('Enter minutes spent:\n'))
-                notes_input = str(input('Enter any additional notes:\n'))
-                select = (str(input("Entry recorded. To quit, press Q. "
-                                    "To go back to the main menu, press any letter.\n"))).upper()
-                if select == "Q":
-                    print("You quit.\n")
-                    break
-                else:
-                    pass
+                date_input = (datetime.strptime(input('Enter a date (MM/DD/YYYY).\n'), '%m/%d/%Y')).date()
+                task_input = str(input('Enter the name of the task.\n'))
+                time_input = int(input('Enter minutes spent:\n'))
+                if time_input > 0 and len(task_input) > 0:
+                    notes_input = str(input('Enter any additional notes:\n'))
+                    writer.writerow([date_input, task_input, time_input, notes_input])
+                    print('Entry recorded.\n')
             except ValueError:
-                print('Sorry, please enter a valid value')
+                print("Sorry, not a valid entry.\n")
             else:
-                print('\t')
                 break
-        writer.writerow([date_input, task_input, time_input, notes_input])
