@@ -64,10 +64,19 @@ def show_details(filtered_dictionary):
     After the search results are shown and final selection is made, this function organizes the data to be included in
     the final results/details. It's formatted to be used by each search function.
     """
-    display_dictionary = show_options(filtered_dictionary.keys())
-    index = int(input("Please select a date to list the details by entering its number on the left side:\n"))
-    selection = display_dictionary[index]
-    show_results(filtered_dictionary, selection)
+    while True:
+        try:
+            display_dictionary = show_options(filtered_dictionary.keys())
+            index = int(input("Please select a date to list the details by entering its number on the left side:\n"))
+            if 0 < index <= len(display_dictionary):
+                selection = display_dictionary[index]
+                show_results(filtered_dictionary, selection)
+            else:
+                raise ValueError
+        except ValueError:
+            print('Sorry, your entry is not valid.\n')
+        else:
+            break
 
 
 def read_dates():
@@ -97,17 +106,24 @@ def read_time():
         dictionary = read_file()
         match = []
         try:
-            search = str(input("Enter the total amount of minutes spent to list associated tasks:\n"))
-            for key, value in dictionary.items():
-                for v in value:
-                    if v['Time'] == search:
-                        match.append(key)
-            filtered_dictionary = dict((k, dictionary[k]) for k in match if k in dictionary)
-            for v in filtered_dictionary.values():
-                for i in v:
-                    if i['Time'] != search:
-                        v.remove(i)
-            show_details(filtered_dictionary)
+            user_input = int(input("Enter the total amount of minutes spent to list associated tasks:\n"))
+            search = str(user_input)
+            if user_input > 0:
+                for key, value in dictionary.items():
+                    for v in value:
+                        if v['Time'] == search:
+                            match.append(key)
+                if len(match) == 0:
+                    print("Sorry, we couldn't find any entry.\n")
+                else:
+                    filtered_dictionary = dict((k, dictionary[k]) for k in match if k in dictionary)
+                    for v in filtered_dictionary.values():
+                        for i in v:
+                            if i['Time'] != search:
+                                v.remove(i)
+                    show_details(filtered_dictionary)
+            else:
+                raise ValueError
         except ValueError:
             print('Sorry, your entry is not valid.\n')
         else:
