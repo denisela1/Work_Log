@@ -4,7 +4,6 @@ import csv_funcs
 def main_screen():
     """First screen for the user to make a selection: new entry, search entry or quit."""
     while True:
-        csv_funcs.clear()
         selection = (input("For a new entry, press E.\n"
                            "To find a previous entry, press S.\n"
                            "To quit, press Q.\n")).upper()
