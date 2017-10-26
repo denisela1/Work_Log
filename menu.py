@@ -27,7 +27,7 @@ def search_menu():
                       "To search by time spent, press T.\n"
                       "To search by exact match, press E.\n"
                       "To search by pattern, press P.\n"
-                      "To go back to the main menu, press Q.\n")).upper()
+                      "To go back to the main menu, press M.\n")).upper()
     if selected == 'D':
         csv_funcs.read_dates()
     elif selected == 'T':
@@ -36,8 +36,8 @@ def search_menu():
         csv_funcs.read_string()
     elif selected == 'P':
         csv_funcs.read_pattern()
-    elif selected == 'Q':
-        print("You quit\n")
+    elif selected == 'M':
+        print("Back to the main menu.\n")
     else:
         print("Not a valid selection.\n")
 
