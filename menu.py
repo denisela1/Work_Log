@@ -2,7 +2,8 @@ import csv_funcs
 
 
 def main_screen():
-    """First screen for the user to make a selection: new entry, search entry or quit."""
+    """First screen for the user to make a selection:
+    new entry, search entry or quit."""
     while True:
         selection = (input("For a new entry, press E.\n"
                            "To find a previous entry, press S.\n"
@@ -20,8 +21,9 @@ def main_screen():
 
 def search_menu():
     """
-    If the user selects "search" option, the following screen will appear, giving the user 4 options to run a search:
-    By date, by time spent, by exact match and by pattern/regular expression.
+    If the user selects "search" option, the following screen will appear,
+    giving the user 4 options to run a search: By date, by time spent,
+    by exact match and by pattern/regular expression.
     """
     selected = (input("To search by date, press D.\n"
                       "To search by time spent, press T.\n"
@@ -44,4 +46,3 @@ def search_menu():
 
 if __name__ == '__main__':
     main_screen()
-
