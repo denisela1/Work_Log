@@ -143,12 +143,15 @@ def read_string():
                 for v in value:
                     if search in (v['Name']).lower():
                         match.append(key)
-            filtered_dictionary = dict((k, dictionary[k]) for k in match if k in dictionary)
-            for v in filtered_dictionary.values():
-                for i in v:
-                    if (i['Name']).lower() != search:
-                        v.remove(i)
-            show_details(filtered_dictionary)
+            if len(match) > 0:
+                filtered_dictionary = dict((k, dictionary[k]) for k in match if k in dictionary)
+                for v in filtered_dictionary.values():
+                    for i in v:
+                        if (i['Name']).lower() != search:
+                            v.remove(i)
+                show_details(filtered_dictionary)
+            else:
+                print("Sorry, no entry found.\n")
         except ValueError:
             print('Sorry, your entry is not valid.\n')
         else:
