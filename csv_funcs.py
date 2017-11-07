@@ -39,7 +39,6 @@ def show_options(data):
     """
     indexed = {}
     for i, v in enumerate(data):
-        print(i + 1, v)
         indexed.update({i + 1: v})
     return indexed
 
@@ -69,13 +68,10 @@ def show_details(filtered_dictionary):
     while True:
         try:
             display_dictionary = show_options(filtered_dictionary.keys())
-            index = int(input("Please select a date to list the details by "
-                              "entering its number on the left side:\n"))
-            if 0 < index <= len(display_dictionary):
-                selection = display_dictionary[index]
+            index = list(range(1, len(display_dictionary)+1))
+            for i in index:
+                selection = display_dictionary[i]
                 show_results(filtered_dictionary, selection)
-            else:
-                raise ValueError
         except ValueError:
             print('Sorry, your entry is not valid.\n')
         else:
@@ -187,6 +183,9 @@ def read_pattern():
                     match_notes = re.findall(search, v['Notes'])
                     if match_name or match_notes:
                         filtered.append(key)
+            if len(filtered) == 0:
+                print("Sorry, no entry found.\n")
+                break
             filtered_dictionary = dict(
                 (k, dictionary[k]) for k in filtered if k in dictionary)
             for v in filtered_dictionary.values():
