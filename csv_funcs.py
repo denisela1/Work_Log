@@ -43,6 +43,18 @@ def show_options(data):
     return indexed
 
 
+def show_options_direct(data):
+    """
+    Function to display date options after the user input. it's formatted to
+    be used after the search logic in each search function.
+    """
+    indexed = {}
+    for i, v in enumerate(data):
+        print(i + 1, v)
+        indexed.update({i + 1: v})
+    return indexed
+
+
 def show_results(dictionary, selection):
     """
     Function to display results based on the selected date.
@@ -86,6 +98,14 @@ def read_dates():
     """
     dictionary = read_file()
     while True:
+        display_dictionary = show_options_direct(dictionary.keys())
+        index = int(input("Please select a date to list the details by "
+                          "entering its number on the left side:\n"))
+        if 0 < index <= len(display_dictionary):
+            selection = display_dictionary[index]
+            show_results(dictionary, selection)
+        else:
+            raise ValueError
         show_details(dictionary)
         prompt = (input('\nPress any letter to go back to the main menu or '
                         'R to return to selection screen.\n')).upper()
@@ -142,6 +162,7 @@ def read_string():
     while True:
         dictionary = read_file()
         match = []
+        filtered_dictionary = {}
         try:
             search = str(input("Enter a keyword to search for a specific task "
                                "or note:\n")).lower()
@@ -149,13 +170,17 @@ def read_string():
                 for v in value:
                     if search in (v['Name']).lower():
                         match.append(key)
+                    if search in (v['Notes']).lower():
+                        match.append(key)
             if len(match) > 0:
                 filtered_dictionary = dict(
                     (k, dictionary[k]) for k in match if k in dictionary)
                 for v in filtered_dictionary.values():
                     for i in v:
-                        if (i['Name']).lower() != search:
+                        print(i)
+                        if search not in (i['Name']).lower():
                             v.remove(i)
+                print(filtered_dictionary)
                 show_details(filtered_dictionary)
             else:
                 print("Sorry, no entry found.\n")
