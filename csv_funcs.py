@@ -159,35 +159,25 @@ def read_string():
     'filtered_dictionary', then passed to the function 'show_details' to list
     the details.
     """
-    while True:
-        dictionary = read_file()
-        match = []
-        filtered_dictionary = {}
-        try:
-            search = str(input("Enter a keyword to search for a specific task "
-                               "or note:\n")).lower()
-            for key, value in dictionary.items():
-                for v in value:
-                    if search in (v['Name']).lower():
-                        match.append(key)
-                    if search in (v['Notes']).lower():
-                        match.append(key)
-            if len(match) > 0:
-                filtered_dictionary = dict(
-                    (k, dictionary[k]) for k in match if k in dictionary)
-                for v in filtered_dictionary.values():
-                    for i in v:
-                        print(i)
-                        if search not in (i['Name']).lower():
-                            v.remove(i)
-                print(filtered_dictionary)
-                show_details(filtered_dictionary)
-            else:
-                print("Sorry, no entry found.\n")
-        except ValueError:
-            print('Sorry, your entry is not valid.\n')
-        else:
-            break
+    dictionary = read_file()
+    results = {}
+    search = str(input("Enter a keyword to search for a specific task or "
+                       "note:\n")).lower()
+    for key, value in dictionary.items():
+        for v in value:
+            if search in (v['Name']).lower():
+                if key in results:
+                    results[key].append(v)
+                else:
+                    results.update({key: [v]})
+            if search in (v["Notes"]).lower():
+                if key in results:
+                    results[key].append(v)
+                else:
+                    results.update({key: [v]})
+    if len(results) == 0:
+        print("Sorry, no entry found.\n")
+    show_details(results)
 
 
 def read_pattern():
